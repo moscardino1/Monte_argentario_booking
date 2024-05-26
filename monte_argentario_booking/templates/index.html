@@ -1,0 +1,15 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Monte Argentario Beach Booking</h1>
+  <div id="map"></div>
+  <script>
+    // Dummy map rendering logic
+    // In a real scenario, you would use a map library like Leaflet or Google Maps API
+    const beaches = ['Beach 1', 'Beach 2', 'Beach 3', 'Beach 4', 'Beach 5'];
+    beaches.forEach(beach => {
+      const div = document.createElement('div');
+      div.innerHTML = `<a href="/book/${beach}">${beach}</a>`;
+      document.getElementById('map').appendChild(div);
+    });
+  </script>
+{% endblock %}

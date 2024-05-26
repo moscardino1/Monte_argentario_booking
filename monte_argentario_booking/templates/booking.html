@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+{% block content %}
+  <h1>Book a Spot at {{ beach }}</h1>
+  <form method="POST" action="{{ url_for('book', beach=beach) }}">
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="date" required>
+    
+    <label for="spot">Spot:</label>
+    <select id="spot" name="spot" required>
+      <option value="">Select a spot</option>
+    </select>
+    
+    <label for="time_slot">Time Slot:</label>
+    <select id="time_slot" name="time_slot" required multiple>
+      <option value="Morning">Morning</option>
+      <option value="Evening">Evening</option>
+    </select>
+    
+    <button type="submit">Book</button>
+  </form>
+  
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var dateInput = document.getElementById('date');
+      var spotSelect = document.getElementById('spot');
+      var timeSlotSelect = document.getElementById('time_slot');
+  
+      function updateSpotsAndTimeSlots(date) {
+        if (date) {
+          fetch(`/api/available_spots/{{ beach }}?date=${date}`)
+            .then(response => response.json())
+            .then(data => {
+              var availableSpots = data.available_spots;
+
+              // Update spots dropdown
+              spotSelect.innerHTML = ''; // Clear existing options
+              var defaultOption = document.createElement('option');
+              defaultOption.value = '';
+              defaultOption.textContent = 'Select a spot';
+              spotSelect.appendChild(defaultOption);
+
+              for (var spot in availableSpots) {
+                var option = document.createElement('option');
+                option.value = spot;
+                option.textContent = 'Spot ' + spot;
+
+                var spotInfo = availableSpots[spot];
+                if (!spotInfo.Morning && !spotInfo.Evening) {
+                  option.disabled = true; // Disable the spot if fully booked
+                }
+
+                spotSelect.appendChild(option);
+              }
+
+              // Update time slots based on selected spot
+              spotSelect.addEventListener('change', function() {
+                var selectedSpot = spotSelect.value;
+                var spotInfo = availableSpots[selectedSpot] || {};
+
+                Array.from(timeSlotSelect.options).forEach(option => {
+                  option.disabled = !spotInfo[option.value];
+                });
+              });
+
+              // Trigger change event to update time slots for the first time
+              spotSelect.dispatchEvent(new Event('change'));
+            });
+        }
+      }
+
+      dateInput.addEventListener('change', function() {
+        var date = dateInput.value;
+        updateSpotsAndTimeSlots(date);
+      });
+    });
+  </script>
+{% endblock %}

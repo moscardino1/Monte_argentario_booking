@@ -1,0 +1,40 @@
+<!-- view_bookings.html -->
+{% extends 'base.html' %}
+{% block content %}
+
+  <h1>All Bookings</h1>
+  <div class="table-responsive">
+    <table id="bookings-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Beach</th>
+          <th>Date</th>
+          <th>Spot</th>
+          <th>Time Slot</th>
+          <th>Booked</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for booking in bookings %}
+          <tr>
+            <td>{{ booking.id }}</td>
+            <td>{{ booking.beach }}</td>
+            <td>{{ booking.date }}</td>
+            <td>{{ booking.spot }}</td>
+            <td>{{ booking.time_slot }}</td>
+
+            <td>{{ 'Yes' if booking.booked else 'No' }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}
+{% block scripts %}
+<script>
+$(document).ready(function() {
+  $('#bookings-table').DataTable();
+});
+</script>
+{% endblock %}
