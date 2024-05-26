@@ -1,85 +1,78 @@
+/* static/css/styles.css */
+
+/* General styles */
 body {
     font-family: Arial, sans-serif;
-}
-nav a {
-    margin: 0 10px;
-}
-#map {
-    margin-top: 20px;
+    margin: 20px; /* Updated margin */
+    width: 100%;
 }
 
-body {
-    font-family: Arial, sans-serif;
-    margin: 20px;
+nav a {
+    margin: 0 10px; /* Added margin */
 }
+
+#map {
+    margin-top: 20px; /* Added margin top */
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
     margin: 20px 0;
 }
-table, th, td {
+
+table,
+th,
+td {
     border: 1px solid black;
 }
-th, td {
+
+th,
+td {
     padding: 8px;
     text-align: left;
 }
+
 th {
     background-color: #f2f2f2;
 }
 
+/* Calendar styles */
 #calendar {
     max-width: 900px;
     margin: 0 auto;
     padding: 20px;
 }
-body {
-    background-color: #f8f9fa;
-}
-.navbar {
-    margin-bottom: 20px;
-}
-h1 {
-    color: #007bff;
-}
-.form-group {
-    margin-bottom: 15px;
-}
-.btn-primary {
-    background-color: #007bff;
-    border-color: #007bff;
-}
 
-/* static/css/styles.css */
+/* Specific styles for popup content */
 .popup-content {
     font-family: Arial, sans-serif;
     font-size: 14px;
     line-height: 1.6;
-  }
-  
-  .popup-heading {
+}
+
+.popup-heading {
     font-size: 18px;
     font-weight: bold;
     margin-bottom: 10px;
-  }
-  
-  .popup-text {
+}
+
+.popup-text {
     margin-bottom: 5px;
-  }
-  
-  .availability-status {
+}
+
+.availability-status {
     font-weight: bold;
-  }
-  
-  .red {
+}
+
+.red {
     color: red;
-  }
-  
-  .yellow {
+}
+
+.yellow {
     color: yellow;
-  }
-  
-  .green {
+}
+
+.green {
     color: green;
-  }
-  
+}
