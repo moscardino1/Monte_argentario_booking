@@ -2,7 +2,7 @@
 
 This project implements a simple beach booking system for Monte Argentario, Italy, showcasing a basic Flask web application deployed on Vercel.
 https://monte-argentario-booking.vercel.app/ 
-
+![beachbook](https://github.com/moscardino1/Monte_argentario_booking/assets/9267948/e307a6a7-6efc-4d88-a46c-a6fa23640138)
 ## Project Structure
 
 - **index.html**: The home page, displaying a map with interactive markers representing various beaches. Each marker shows availability information.
@@ -21,6 +21,7 @@ https://monte-argentario-booking.vercel.app/
 - **Vercel Deployment**: The project is deployed on Vercel, allowing for easy deployment and hosting of the web application.
 
 ## How it Works
+
 
 1. **User Interaction**: Users interact with the home page map, clicking on markers to view beach availability information and booking details.
 2. **Booking Form**: Clicking the booking link for a beach opens the booking form. Users choose the desired date, spot, and time slot.
