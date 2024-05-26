@@ -1,15 +1,58 @@
 {% extends 'base.html' %}
 {% block content %}
-  <h1>Monte Argentario Beach Booking</h1>
+  <h1 class="mb-4">Monte Argentario Beach Booking</h1>
+
   <div id="map"></div>
   <script>
-    // Dummy map rendering logic
-    // In a real scenario, you would use a map library like Leaflet or Google Maps API
-    const beaches = ['Beach 1', 'Beach 2', 'Beach 3', 'Beach 4', 'Beach 5'];
-    beaches.forEach(beach => {
-      const div = document.createElement('div');
-      div.innerHTML = `<a href="/book/${beach}">${beach}</a>`;
-      document.getElementById('map').appendChild(div);
+    document.addEventListener('DOMContentLoaded', function() {
+      var map = L.map('map').setView([42.4073520, 11.1503838], 12);
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+      }).addTo(map);
+
+      var beaches = [
+        { name: "Cala del Gesso", coords: [42.416, 11.0925], img: "cala_del_gesso.png" },
+        { name: "Cannelle", coords: [42.37801, 11.14125], img: "cannelle.png" },
+        { name: "Caletta", coords: [42.44315, 11.11471], img: "caletta.png" },
+        { name: "Cacciarella", coords: [42.43874, 11.10023], img: "cacciarella.png" },
+        { name: "Cantoniera", coords: [42.43716, 11.12875], img: "cantoniera.png" }
+      ];
+
+      beaches.forEach(function(beach) {
+        var marker = L.marker(beach.coords).addTo(map)
+          .bindPopup(`<a href="/book/${beach.name.toLowerCase().replace(/ /g, '_')}">${beach.name}</a><br><img src="/static/images/${beach.img}" alt="${beach.name}" style="width:100px;height:auto;">`);
+
+        // Fetch today's availability and update popup
+        fetch(`/api/available_spots/${beach.name.toLowerCase().replace(/ /g, '_')}?date=${new Date().toISOString().split('T')[0]}`)
+          .then(response => response.json())
+          .then(data => {
+            var availableSpots = data.available_spots;
+            var totalSpots = Object.keys(availableSpots).length;
+            var availableSpotCount = Object.values(availableSpots).filter(slot => slot.Morning || slot.Evening).length;
+
+            var availabilityPercentage = (availableSpotCount / totalSpots) * 100;
+            var availabilityColorClass = 'red';
+
+            if (availabilityPercentage >= 10) {
+              availabilityColorClass = 'green';
+            } else if (availabilityPercentage > 0) {
+              availabilityColorClass = 'yellow';
+            }
+
+            var availabilityPopupContent = `<div class="popup-content">`;
+            availabilityPopupContent += `<h3 class="popup-heading">Availability Summary</h3>`;
+            availabilityPopupContent += `<p class="popup-text">Available Spots: <span class="availability-status">${availableSpotCount} / ${totalSpots}</span></p>`;
+            availabilityPopupContent += `<p class="popup-text">Availability Status: <span class="${availabilityColorClass}">${availabilityPercentage.toFixed(2)}%</span></p>`;
+            availabilityPopupContent += `</div>`;
+
+            marker.bindPopup(marker.getPopup().getContent() + availabilityPopupContent);
+          });
+      });
     });
   </script>
+
+  <h2 class="mb-4">Check the Weather in Real Time</h2>
+  <a href="https://www.skylinewebcams.com/it/webcam/italia/toscana/grosseto/porto-santo-stefano.html" target="_blank"><img src="https://embed.skylinewebcams.com/img/785.jpg" alt="【LIVE】 Porto Santo Stefano - Monte Argentario | SkylineWebcams"></a>
+
 {% endblock %}

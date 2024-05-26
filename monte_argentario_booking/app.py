@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from config import Config
 from datetime import datetime
 
-app = Flask(__name__)
+app = Flask(__name__, static_folder='static')
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 
@@ -15,13 +15,12 @@ class Booking(db.Model):
     spot = db.Column(db.Integer, nullable=False)
     booked = db.Column(db.Boolean, default=False)
 
-# Define the number of spots for each beach
 beach_spots = {
-    "Beach 1": 5,
-    "Beach 2": 10,
-    "Beach 3": 8,
-    "Beach 4": 8,
-    "Beach 5": 8
+    "cala_del_gesso": 5,
+    "cannelle": 10,
+    "caletta": 8,
+    "cacciarella": 8,
+    "cantoniera": 8
 }
 
 @app.route('/')
@@ -30,20 +29,19 @@ def index():
 
 @app.route('/book/<beach>', methods=['GET', 'POST'])
 def book(beach):
+    beach_name = beach.replace('_', ' ').title()  # Convert to a readable format
     if request.method == 'POST':
         date_str = request.form['date']
         date = datetime.strptime(date_str, '%Y-%m-%d').date()
         spot = int(request.form['spot'])
         time_slots = request.form.getlist('time_slot')
         
-        # Check if any conflicting bookings exist for the selected date and spot
         conflicting_bookings = Booking.query.filter_by(beach=beach, date=date, spot=spot).all()
         for booking in conflicting_bookings:
             if booking.time_slot in time_slots:
                 flash('Conflicting booking exists for the selected date, spot, and time slot.')
                 return redirect(url_for('book', beach=beach))
         
-        # If no conflicting bookings, proceed with the booking
         for time_slot in time_slots:
             booking = Booking(beach=beach, date=date, time_slot=time_slot, spot=spot, booked=True)
             db.session.add(booking)
@@ -52,15 +50,14 @@ def book(beach):
         
         return redirect(url_for('book', beach=beach))
     
-    return render_template('booking.html', beach=beach)
+    return render_template('booking.html', beach=beach_name)
 
 @app.route('/api/available_spots/<beach_name>')
 def api_available_spots(beach_name):
     date_str = request.args.get('date')
     date = datetime.strptime(date_str, '%Y-%m-%d').date()
 
-    # Get all existing bookings for the specified beach and date
-    existing_bookings = Booking.query.filter_by(beach=beach_name, date=date).all()
+    existing_bookings = Booking.query.filter_by(beach=beach_name).filter_by(date=date).all()
 
     booked_spots = {}
     for booking in existing_bookings:
@@ -68,7 +65,7 @@ def api_available_spots(beach_name):
             booked_spots[booking.spot] = []
         booked_spots[booking.spot].append(booking.time_slot)
 
-    total_spots = beach_spots.get(beach_name, 10)  # Default to 10 if beach not found
+    total_spots = beach_spots.get(beach_name, 10)
 
     available_spots = {
         spot: {
@@ -89,5 +86,7 @@ def view_bookings():
 def view_beach_bookings(beach_name):
     return render_template('beach_bookings.html', beach=beach_name)
 
+ 
 if __name__ == '__main__':
     app.run(debug=True)
+
